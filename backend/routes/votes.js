@@ -1,8 +1,8 @@
 import express from "express"
-import {  } from "../controllers/vote.js"
+import { getVotes } from "../controllers/vote.js"
 
 const router = express.Router()
 
-router.get("", )
+router.get("/", getVotes)
 
 export default router

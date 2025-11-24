@@ -21,6 +21,6 @@
 | col | desc |
 |---|---|
 | id | uuid |
-| desc | varchar(512) |
+| desc | varchar(1048) |
 | img_link | varchar(512) |
 | user_id | uuid, fk, user table|
