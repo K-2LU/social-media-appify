@@ -1,12 +1,12 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
-// Import your CSS files in layout.tsx or here if they are global
 import '@/styles/main.css'; 
 import '@/styles/responsive.css';
-import { BgShapes } from '@/componenets/login/BgShapes';
-import { Button } from '@/componenets/ui/Button';
-import { LoginForm } from '@/componenets/login/LoginForm';
+
+import { BgShapes } from '@/components/login/BgShapes';
+import { Button } from '@/components/ui/Button';
+import { LoginForm } from '@/components/login/LoginForm';
 
 export default function LoginPage() {
   return (

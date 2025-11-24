@@ -5,6 +5,7 @@ import "@/styles/bootstrap.min.css";
 import "@/styles/common.css";
 import "@/styles/main.css";
 import "@/styles/responsive.css";
+import { AuthContextProvider } from "@/context/authContext";
 
 
 const geistSans = Geist({
@@ -32,8 +33,9 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-
-        {children}
+        <AuthContextProvider>
+          {children}
+        </AuthContextProvider>
       </body>
     </html>
   );
