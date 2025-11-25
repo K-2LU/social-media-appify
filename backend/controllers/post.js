@@ -4,10 +4,10 @@ import moment from "moment";
 
 export const getPosts = async (req, res) => {
   const query = `
-    SELECT p.*, u.id as userId, name, display_pic 
+    SELECT p.*, u.id as userId, u.username, u.first_name, u.last_name, u.display_pic 
     FROM posts AS p 
     JOIN users AS u ON (u.id = p.user_id)
-    ORDER BY p.created_at DESC
+    ORDER BY p."createdAt" DESC
   `;
 
   try {
