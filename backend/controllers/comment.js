@@ -8,11 +8,10 @@ export const getComments = async (req, res) => {
     FROM comments AS c 
     JOIN users AS u ON (u.id = c.user_id)
     WHERE c.post_id = $1 
-    ORDER BY c.created_at DESC
+    ORDER BY c.created_at ASC
   `;
 
   try {
-    // ?postId=... in the query string
     const data = await pool.query(q, [req.query.postId]);
     return res.status(200).json(data.rows);
   } catch (err) {
@@ -28,9 +27,10 @@ export const addComment = (req, res) => {
   jwt.verify(token, process.env.JWT_SECRET || "secretkey", async (err, userInfo) => {
     if (err) return res.status(403).json("Token is not valid!");
 
+    // Updated query to insert parent_comment_id
     const q = `
-      INSERT INTO comments ("desc", created_at, user_id, post_id) 
-      VALUES ($1, $2, $3, $4)
+      INSERT INTO comments ("desc", created_at, user_id, post_id, parent_comment_id) 
+      VALUES ($1, $2, $3, $4, $5)
       RETURNING *
     `;
 
@@ -38,7 +38,8 @@ export const addComment = (req, res) => {
       req.body.desc,
       moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
       userInfo.id,
-      req.body.postId
+      req.body.postId,
+      req.body.parentCommentId || null // if top-level comment, null
     ];
 
     try {
