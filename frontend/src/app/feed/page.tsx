@@ -1,7 +1,6 @@
 "use client"
 import Link from 'next/link';
 
-import "dotenv/config"
 import axios from "axios";
 import { useState, useEffect } from 'react';
 
@@ -37,16 +36,21 @@ export default function FeedPage() {
 
   const [posts, setPosts] = useState<Post[]>([]);
 
+  const fetchPosts = async () => {
+    try {
+      console.log("fetching posts");
+
+      const res = await axios.get(
+        `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/api/post`,
+        { withCredentials: true }
+      );
+      setPosts(res.data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        const res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/api/post`,
-          { withCredentials: true });
-        setPosts(res.data);
-      } catch (err) {
-        console.log(err);
-      }
-    };
     fetchPosts();
   }, []);
 
@@ -70,19 +74,6 @@ export default function FeedPage() {
                 <div className="col-xl-3 col-lg-3 col-md-12 col-sm-12">
                   <div className="_layout_left_sidebar_wrap">
 
-                    {/* Explore Menu */}
-                    <SidebarSection title="Explore">
-                      <ul className="_left_inner_area_explore_list">
-                        <li className="_left_inner_area_explore_item">
-                          <Link href="/learning" className="_left_inner_area_explore_link">Learning</Link>
-                        </li>
-                        <li className="_left_inner_area_explore_item">
-                          <Link href="/insights" className="_left_inner_area_explore_link">Insights</Link>
-                        </li>
-                        {/* Add more menu items here */}
-                      </ul>
-                    </SidebarSection>
-
                     {/* Suggested People */}
                     <SidebarSection title="Suggested People" seeAllLink="/people">
                       <UserListEntry
@@ -97,40 +88,20 @@ export default function FeedPage() {
                       />
                     </SidebarSection>
 
-                    {/* Events */}
-                    <div className="col-xl-3 col-lg-3 col-md-12 col-sm-12">
-                      <div className="_layout_left_sidebar_wrap">
-
-                        {/* ... Explore Section ... */}
-                        {/* ... Suggested People Section ... */}
-
-                        {/* EVENTS SECTION */}
-                        <SidebarSection title="Events" seeAllLink="/events">
-                          {/* Map over the data */}
-                          {events.map((event) => (
-                            <EventCard key={event.id} event={event} />
-                          ))}
-                        </SidebarSection>
-
-                      </div>
-                    </div>
-
                   </div>
                 </div>
 
-                {/* --- MIDDLE FEED --- */}
+                {/* --- Main feed --- */}
                 <div className="col-xl-6 col-lg-6 col-md-12 col-sm-12">
                   <div className="_layout_middle_wrap">
                     <div className="_layout_middle_inner">
 
                       <StoryReel />
 
-                      <CreatePost />
+                      <CreatePost onPostCreated={fetchPosts} />
                       {posts.map((post) => (
                         <PostCard key={post.id} post={post} />
                       ))}
-                      {/* Post 1 */}
-                    
 
                     </div>
                   </div>
