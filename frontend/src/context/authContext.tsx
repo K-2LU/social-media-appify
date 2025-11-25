@@ -29,14 +29,14 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
   });
 
   const login = async (inputs: any) => {
-    const res = await axios.post(`${process.env.BACKEND_BASE_URL}/api/auth/login`, inputs, {
+    const res = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/api/auth/login`, inputs, {
         withCredentials: true 
     });
     setCurrentUser(res.data);
   };
 
   const logout = async () => {
-    await axios.post(`${process.env.BACKEND_BASE_URL}/api/auth/logout`, null, {
+    await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/api/auth/logout`, null, {
         withCredentials: true
     });
     setCurrentUser(null);

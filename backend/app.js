@@ -11,12 +11,9 @@ import authRoutes from './routes/auth.js'
 
 import cors from "cors"
 import cookieParser from "cookie-parser";
+
 // middlewares
-// parse JSON bodies (only once)
-
-
 app.use(Express.json())
-// app.use(cors())
 app.use(cookieParser())
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Credentials", true);
