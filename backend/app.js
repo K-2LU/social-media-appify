@@ -59,6 +59,6 @@ app.use("/api/comment", commentRoutes)
 app.use("/api/comment-vote", commentVoteRoutes);
 app.use("/api/follow", followersRoutes)
 
-app.listen(8000, () => {
+app.listen( process.env.BACKEND_PORT_ADDRESS || 8000, () => {
     console.log("app listening");
 })
