@@ -46,13 +46,11 @@ export const PostCard = ({ post }: PostCardProps) => {
 
   // 3. Handle Like Toggle
   const handleLike = async () => {
-    // Optimistic Update: Update UI immediately before API call finishes
     if (isLiked) {
       setLikes(prev => prev.filter(id => id !== currentUser?.id));
       try {
         await axios.delete(`${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/api/vote?postId=${post.id}`, { withCredentials: true });
       } catch (err) {
-        // Revert if error
         if (currentUser?.id) setLikes(prev => [...prev, currentUser.id]);
       }
     } else {
@@ -60,7 +58,6 @@ export const PostCard = ({ post }: PostCardProps) => {
       try {
         await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/api/vote`, { postId: post.id }, { withCredentials: true });
       } catch (err) {
-        // Revert if error
         setLikes(prev => prev.filter(id => id !== currentUser?.id));
       }
     }
@@ -112,12 +109,12 @@ export const PostCard = ({ post }: PostCardProps) => {
               </Link>
               <p className="_feed_inner_timeline_post_box_para">
                 {moment(post.createdAt).fromNow()} .
-                <a href="#0"> {post.audience === 1 ? "Public" : "Friends"}</a>
+                <a href="#0"> {post.audience === 1 ? "Public" : "Private"}</a>
               </p>
             </div>
           </div>
 
-          {/* Dropdown Menu (Three Dots) */}
+
           <div className="_feed_inner_timeline_post_box_dropdown" style={{ position: 'relative' }}>
             <div className="_feed_timeline_post_dropdown">
               <button
@@ -133,7 +130,7 @@ export const PostCard = ({ post }: PostCardProps) => {
               </button>
             </div>
 
-            {/* Dropdown Content */}
+
             {showMenu && (
               <div className="_feed_timeline_dropdown show" style={{ display: 'block', right: 0, top: '30px' }}>
                 <ul className="_feed_timeline_dropdown_list">
@@ -165,10 +162,10 @@ export const PostCard = ({ post }: PostCardProps) => {
           </div>
         </div>
 
-        {/* --- CONTENT SECTION --- */}
+
         <h4 className="_feed_inner_timeline_post_title">{post.desc}</h4>
 
-        {/* Image Rendering Logic */}
+
         {post.img_link && post.img_link.length > 0 && (
           <div className="_feed_inner_timeline_image">
             <Image
@@ -182,16 +179,14 @@ export const PostCard = ({ post }: PostCardProps) => {
         )}
       </div>
 
-      {/* --- STATS SECTION --- */}
+
       <div className="_feed_inner_timeline_total_reacts _padd_r24 _padd_l24 _mar_b26">
         <div className="_feed_inner_timeline_total_reacts_image">
           <Image src="/assets/images/react_img1.png" alt="" width={20} height={20} className="_react_img1" />
-          {/* Show Like Count */}
           <p className="_feed_inner_timeline_total_reacts_para">{likes.length}</p>
         </div>
         <div className="_feed_inner_timeline_total_reacts_txt">
           <p className="_feed_inner_timeline_total_reacts_para1">
-            {/* Show Comment Count if available, else 0 */}
             <span>{comments.length}</span> Comments
           </p>
         </div>

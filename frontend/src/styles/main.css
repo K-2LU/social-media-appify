@@ -80,6 +80,7 @@
 }
 ._layout_left_sidebar_wrap {
     height: calc(100vh - 75px);
+    width: 100%;
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;

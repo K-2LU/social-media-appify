@@ -8,29 +8,10 @@ import { EventData, Post } from '@/interfaces';
 import { Header } from '@/components/layout/Header';
 import { SidebarSection } from '@/components/layout/SidebarSection';
 import { UserListEntry } from '@/components/layout/UserListEntry';
-import { EventCard } from '@/components/layout/EventCard';
-import { StoryReel } from '@/components/feed/StoryReel';
 import { CreatePost } from '@/components/feed/CreatePost';
 import { PostCard } from '@/components/feed/PostCard';
+import { Suggestions } from '@/components/layout/Suggestions';
 
-const events: EventData[] = [
-  {
-    id: "1",
-    title: "No more terrorism no more cry",
-    date: "2025-07-10T14:00:00Z",
-    image: "/assets/images/feed_event1.png",
-    attendeesCount: 17,
-    isUserGoing: false
-  },
-  {
-    id: "2",
-    title: "Tech Conference 2025",
-    date: "2025-08-15T09:00:00Z",
-    image: "/assets/images/feed_event1.png", // Replace with real image
-    attendeesCount: 120,
-    isUserGoing: true
-  }
-];
 
 export default function FeedPage() {
 
@@ -73,21 +54,7 @@ export default function FeedPage() {
                 {/* --- LEFT SIDEBAR --- */}
                 <div className="col-xl-3 col-lg-3 col-md-12 col-sm-12">
                   <div className="_layout_left_sidebar_wrap">
-
-                    {/* Suggested People */}
-                    <SidebarSection title="Suggested People" seeAllLink="/people">
-                      <UserListEntry
-                        name="Steve Jobs"
-                        subtitle="CEO of Apple"
-                        image="/assets/images/people1.png"
-                      />
-                      <UserListEntry
-                        name="Ryan Roslansky"
-                        subtitle="CEO of Linkedin"
-                        image="/assets/images/people2.png"
-                      />
-                    </SidebarSection>
-
+                    <Suggestions />
                   </div>
                 </div>
 
@@ -95,8 +62,6 @@ export default function FeedPage() {
                 <div className="col-xl-6 col-lg-6 col-md-12 col-sm-12">
                   <div className="_layout_middle_wrap">
                     <div className="_layout_middle_inner">
-
-                      <StoryReel />
 
                       <CreatePost onPostCreated={fetchPosts} />
                       {posts.map((post) => (
@@ -107,33 +72,7 @@ export default function FeedPage() {
                   </div>
                 </div>
 
-                {/* --- RIGHT SIDEBAR --- */}
-                <div className="col-xl-3 col-lg-3 col-md-12 col-sm-12">
-                  <div className="_layout_right_sidebar_wrap">
-                    <div className="_layout_right_sidebar_inner">
-
-                      <SidebarSection title="You Might Like" seeAllLink="/suggested">
-                        <UserListEntry
-                          name="Radovan SkillArena"
-                          subtitle="Founder & CEO"
-                          image="/assets/images/Avatar.png"
-                          action="Follow"
-                        />
-                      </SidebarSection>
-
-                      <SidebarSection title="Your Friends" seeAllLink="/friends">
-                        {/* Reuse UserListEntry or Create FriendEntry component */}
-                        <UserListEntry
-                          name="Steve Jobs"
-                          subtitle="CEO of Apple"
-                          image="/assets/images/people1.png"
-                          action="Ignore" // Or hide button
-                        />
-                      </SidebarSection>
-
-                    </div>
-                  </div>
-                </div>
+                
 
               </div>
             </div>

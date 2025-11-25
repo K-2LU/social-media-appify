@@ -11,23 +11,21 @@ import { CommentType } from "@/interfaces";
 
 interface CommentItemProps {
   comment: CommentType;
-  replies?: CommentType[]; 
+  replies?: CommentType[];
   onReply?: () => void;
 }
 
 export const CommentItem = ({ comment, replies = [], onReply }: CommentItemProps) => {
   const { currentUser } = useContext(AuthContext)!;
   const [showReply, setShowReply] = useState(false);
-  
-  // Like State
-  const [likes, setLikes] = useState<string[]>([]); 
+
+  const [likes, setLikes] = useState<string[]>([]);
   const [isLiked, setIsLiked] = useState(false);
-  
-  // Reply State
+
   const [replyDesc, setReplyDesc] = useState("");
   const [replyLoading, setReplyLoading] = useState(false);
 
-  // 1. Fetch Likes for this specific comment
+
   useEffect(() => {
     const fetchLikes = async () => {
       try {
@@ -46,7 +44,7 @@ export const CommentItem = ({ comment, replies = [], onReply }: CommentItemProps
     }
   }, [likes, currentUser]);
 
-  // 2. Handle Like Toggle
+
   const handleLike = async () => {
     if (isLiked) {
       setLikes((prev) => prev.filter((id) => id !== currentUser?.id));
@@ -65,7 +63,7 @@ export const CommentItem = ({ comment, replies = [], onReply }: CommentItemProps
     }
   };
 
-  // 3. Handle Reply Submission
+
   const handleReplySubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!replyDesc.trim()) return;
@@ -76,17 +74,16 @@ export const CommentItem = ({ comment, replies = [], onReply }: CommentItemProps
         `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/api/comment`,
         {
           desc: replyDesc,
-          postId: comment.post_id, 
-          parentCommentId: comment.id // Creates a Level 2 reply
+          postId: comment.post_id,
+          parentCommentId: comment.id
         },
         { withCredentials: true }
       );
-      
+
       setReplyDesc("");
       setShowReply(false);
-      
-      // 4. Trigger Refresh
-      if (onReply) onReply(); 
+
+      if (onReply) onReply();
 
     } catch (err) {
       console.error("Failed to reply", err);
@@ -101,16 +98,16 @@ export const CommentItem = ({ comment, replies = [], onReply }: CommentItemProps
       <div className="_comment_main">
         <div className="_comment_image">
           <Link href={`/profile/${comment.userId}`} className="_comment_image_link">
-            <Image 
-              src={comment.profilePic || "/assets/images/profile.png"} 
-              alt={comment.first_name || ""} 
-              width={40} 
-              height={40} 
-              className="_comment_img1 rounded-circle object-fit-cover" 
+            <Image
+              src={comment.profilePic || "/assets/images/profile.png"}
+              alt={comment.first_name || ""}
+              width={40}
+              height={40}
+              className="_comment_img1 rounded-circle object-fit-cover"
             />
           </Link>
         </div>
-        
+
         <div className="_comment_area">
           <div className="_comment_details w-full">
             <div className="_comment_details_top">
@@ -120,48 +117,48 @@ export const CommentItem = ({ comment, replies = [], onReply }: CommentItemProps
                 </Link>
               </div>
             </div>
-            
+
             <div className="_comment_status">
               <p className="_comment_status_text">
                 <span>{comment.desc}</span>
               </p>
             </div>
-            
+
             {/* Like Count Bubble */}
             {likes.length > 0 && (
-              <div className="_total_reactions" style={{right: '-15px'}}>
+              <div className="_total_reactions" style={{ right: '-15px' }}>
                 <div className="_total_react">
                   <span className="_reaction_like">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="#fff" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-thumbs-up" style={{fill: '#377dff', stroke: 'none'}}><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="#fff" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-thumbs-up" style={{ fill: '#377dff', stroke: 'none' }}><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path></svg>
                   </span>
                 </div>
                 <span className="_total">{likes.length}</span>
               </div>
             )}
-            
+
             <div className="_comment_reply">
               <div className="_comment_reply_num">
                 <ul className="_comment_reply_list">
                   <li>
-                    <button 
-                      className={`btn p-0 border-0 ${isLiked ? 'text-primary fw-bold' : 'text-muted'}`} 
-                      style={{fontSize: '12px'}}
+                    <button
+                      className={`btn p-0 border-0 ${isLiked ? 'text-primary fw-bold' : 'text-muted'}`}
+                      style={{ fontSize: '12px' }}
                       onClick={handleLike}
                     >
                       Like
                     </button>
                   </li>
                   <li>
-                    <button 
-                      className="btn p-0 border-0 text-muted" 
-                      style={{fontSize: '12px'}} 
+                    <button
+                      className="btn p-0 border-0 text-muted"
+                      style={{ fontSize: '12px' }}
                       onClick={() => setShowReply(!showReply)}
                     >
                       Reply
                     </button>
                   </li>
-                  <li><span style={{fontSize: '12px'}}>Share</span></li>
-                  <li><span className="_time_link" style={{fontSize: '12px'}}>. {moment(comment.created_at).fromNow()}</span></li>
+                  <li><span style={{ fontSize: '12px' }}>Share</span></li>
+                  <li><span className="_time_link" style={{ fontSize: '12px' }}>. {moment(comment.created_at).fromNow()}</span></li>
                 </ul>
               </div>
             </div>
@@ -173,17 +170,17 @@ export const CommentItem = ({ comment, replies = [], onReply }: CommentItemProps
               <form className="_feed_inner_comment_box_form" onSubmit={handleReplySubmit}>
                 <div className="_feed_inner_comment_box_content">
                   <div className="_feed_inner_comment_box_content_image">
-                    <Image 
-                      src={currentUser?.display_pic || "/assets/images/profile.png"} 
-                      width={30} 
-                      height={30} 
-                      alt="User" 
-                      className="_comment_img rounded-circle" 
+                    <Image
+                      src={currentUser?.display_pic || "/assets/images/profile.png"}
+                      width={30}
+                      height={30}
+                      alt="User"
+                      className="_comment_img rounded-circle"
                     />
                   </div>
                   <div className="_feed_inner_comment_box_content_txt">
-                    <textarea 
-                      className="form-control _comment_textarea" 
+                    <textarea
+                      className="form-control _comment_textarea"
                       placeholder={`Reply to ${comment.first_name}...`}
                       value={replyDesc}
                       onChange={(e) => setReplyDesc(e.target.value)}
@@ -192,14 +189,14 @@ export const CommentItem = ({ comment, replies = [], onReply }: CommentItemProps
                   </div>
                 </div>
                 <div className="_feed_inner_comment_box_icon text-end">
-                   <button 
-                     type="submit"
-                     className="btn btn-primary btn-sm py-0 px-2" 
-                     style={{fontSize: '12px'}}
-                     disabled={replyLoading}
-                   >
-                     {replyLoading ? "..." : "Reply"}
-                   </button>
+                  <button
+                    type="submit"
+                    className="btn btn-primary btn-sm py-0 px-2"
+                    style={{ fontSize: '12px' }}
+                    disabled={replyLoading}
+                  >
+                    {replyLoading ? "..." : "Reply"}
+                  </button>
                 </div>
               </form>
             </div>
@@ -219,11 +216,11 @@ export const CommentItem = ({ comment, replies = [], onReply }: CommentItemProps
             width: '2px',
             backgroundColor: '#f0f2f5'
           }} />
-          
+
           {replies.map((reply) => (
-            <CommentItem 
-              key={reply.id} 
-              comment={reply} 
+            <CommentItem
+              key={reply.id}
+              comment={reply}
               onReply={onReply} // Pass refresh trigger down recursively
             />
           ))}

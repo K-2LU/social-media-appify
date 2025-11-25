@@ -57,7 +57,7 @@ app.use("/api/post", postRoutes)
 app.use("/api/vote", voteRoutes)
 app.use("/api/comment", commentRoutes)
 app.use("/api/comment-vote", commentVoteRoutes);
-app.use("api/follow", followersRoutes)
+app.use("/api/follow", followersRoutes)
 
 app.listen(8000, () => {
     console.log("app listening");
