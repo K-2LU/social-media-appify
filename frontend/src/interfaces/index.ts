@@ -58,3 +58,12 @@ export interface PostWithAuthor extends Post {
 export interface CommentWithAuthor extends Comment {
   author: Pick<User, "id" | "username" | "display_pic">;
 }
+
+export interface EventData {
+  id: string;
+  title: string;
+  date: string; // ISO String from DB (e.g., "2025-07-10T10:00:00Z")
+  image: string;
+  attendeesCount: number;
+  isUserGoing: boolean; // To toggle the "Going" button status
+}

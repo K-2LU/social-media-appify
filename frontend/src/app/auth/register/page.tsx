@@ -4,9 +4,9 @@ import Link from 'next/link';
 // Global styles
 import '@/styles/main.css'; 
 import '@/styles/responsive.css';
-import { BgShapes } from '@/components/login/BgShapes';
-import { RegisterForm } from '@/components/register/RegisterForm';
-import { Button } from '@/components/ui/Button';
+import { BgShapes } from '@/componenets/login/BgShapes';
+import { Button } from '@/componenets/ui/Button';
+import { RegisterForm } from '@/componenets/register/RegisterForm';
 
 export default function RegisterPage() {
   return (
