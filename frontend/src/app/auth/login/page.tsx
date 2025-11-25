@@ -58,7 +58,7 @@ export default function LoginPage() {
                   <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                     <div className="_social_login_bottom_txt">
                       <p className="_social_login_bottom_txt_para">
-                        Dont have an account? <Link href="/register">Create New Account</Link>
+                        Dont have an account? <Link href="/auth/register">Create New Account</Link>
                       </p>
                     </div>
                   </div>

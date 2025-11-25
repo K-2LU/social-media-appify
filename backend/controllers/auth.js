@@ -58,6 +58,8 @@ export const login = (req, res) => {
     res
       .cookie("accessToken", token, {
         httpOnly: true,
+        secure: false,    // MUST be false for localhost (http)
+        sameSite: "lax",  // MUST be 'lax' so the browser sends it to port 8000
       })
       .status(200)
       .json(others);

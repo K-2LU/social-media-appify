@@ -15,11 +15,25 @@ export interface User {
 }
 
 // 2. Posts Table
+// export interface Post {
+//   id: string;
+//   desc: string;
+//   img_link: string[] | null; // Postgres array
+//   createdAt: string;
+//   userId: string;
+//   name: string;       // From JOIN users
+//   display_pic: string | null; // From JOIN users
+//   audience?: number;  // 1 = Public, etc.
+// }
+
 export interface Post {
   id: string;
   desc: string;
   img_link: string[] | null;
-  user_id: string;
+  userId: string;
+  first_name: string;
+  last_name: string;
+  display_pic: string | null;
   createdAt: string;
   upvote: number | null;
   downvote: number | null;
