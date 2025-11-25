@@ -5,25 +5,40 @@ import { CommentItem } from "./CommentItem";
 
 interface CommentsProps {
   comments: CommentType[];
+  onReply?: () => void; // Add this to pass the refresh trigger down
 }
 
-export const Comments = ({ comments }: CommentsProps) => {
+export const Comments = ({ comments, onReply }: CommentsProps) => {
+  
+  // 1. Filter out the top-level comments (Level 1)
+  const rootComments = comments.filter(
+    (comment) => comment.parent_comment_id === null
+  );
+
+  // 2. Helper to find children for a specific parent (Level 2)
+  const getReplies = (parentId: string) => {
+    return comments.filter((comment) => comment.parent_comment_id === parentId);
+  };
+
   return (
     <div className="_timline_comment_main">
-      {comments.length > 3 && (
-        <div className="_previous_comment">
-          <button type="button" className="_previous_comment_txt">
-            View previous comments
-          </button>
-        </div>
-      )}
-
-      {comments.map((comment) => (
-        <CommentItem key={comment.id} comment={comment} />
+      {/* View Previous Comments Button logic can go here */}
+      
+      {/* Render only Root Comments */}
+      {rootComments.map((rootComment) => (
+        <CommentItem 
+          key={rootComment.id} 
+          comment={rootComment} 
+          // 3. Pass the children dynamically
+          replies={getReplies(rootComment.id)}
+          onReply={onReply}
+        />
       ))}
       
       {comments.length === 0 && (
-        <p className="text-center text-muted py-2" style={{fontSize: '14px'}}>No comments yet. Be the first!</p>
+        <p className="text-center text-muted py-2" style={{fontSize: '14px'}}>
+          No comments yet.
+        </p>
       )}
     </div>
   );

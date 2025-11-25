@@ -53,10 +53,13 @@ export interface Comment {
 export interface CommentType {
   id: string;
   desc: string;
-  name: string;
+  first_name: string;
+  last_name: string;
   userId: string;
   profilePic: string | null;
-  createdAt?: string;
+  created_at?: string;
+  post_id: string; 
+  parent_comment_id: string | null; // Needed to identify nesting
 }
 
 

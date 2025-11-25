@@ -25,7 +25,7 @@ export const PostCard = ({ post }: PostCardProps) => {
     if (imgName.startsWith("http")) return imgName;
     return `/upload/${imgName}`;
   };
-  
+
   const profilePic = post.display_pic || "/assets/images/Avatar.png";
 
   // 1. Fetch Likes
@@ -53,7 +53,7 @@ export const PostCard = ({ post }: PostCardProps) => {
         await axios.delete(`${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/api/vote?postId=${post.id}`, { withCredentials: true });
       } catch (err) {
         // Revert if error
-        if (currentUser?.id) setLikes(prev => [...prev, currentUser.id]); 
+        if (currentUser?.id) setLikes(prev => [...prev, currentUser.id]);
       }
     } else {
       if (currentUser?.id) setLikes(prev => [...prev, currentUser.id]);
@@ -199,27 +199,27 @@ export const PostCard = ({ post }: PostCardProps) => {
 
       {/* --- ACTION BUTTONS --- */}
       <div className="_feed_inner_timeline_reaction">
-        <button 
+        <button
           // Add active class if liked
           className={`_feed_inner_timeline_reaction_emoji _feed_reaction ${isLiked ? '_feed_reaction_active' : ''}`}
           onClick={handleLike}
         >
-          <span className="_feed_inner_timeline_reaction_link"> 
+          <span className="_feed_inner_timeline_reaction_link">
             <span>
               {/* Using standard thumbs up SVG for generic 'Like' or keeping your existing icon */}
               {isLiked ? (
-                 // Filled/Active Icon
-                 <svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" fill="none" viewBox="0 0 19 19">
-                   <path fill="#FFCC4D" d="M9.5 19a9.5 9.5 0 100-19 9.5 9.5 0 000 19z"></path>
-                   <path fill="#664500" d="M9.5 11.083c-1.912 0-3.181-.222-4.75-.527-.358-.07-1.056 0-1.056 1.055 0 2.111 2.425 4.75 5.806 4.75 3.38 0 5.805-2.639 5.805-4.75 0-1.055-.697-1.125-1.055-1.055-1.57.305-2.838.527-4.75.527z"></path>
-                   <path fill="#fff" d="M4.75 11.611s1.583.528 4.75.528 4.75-.528 4.75-.528-1.056 2.111-4.75 2.111-4.75-2.11-4.75-2.11z"></path>
-                   <path fill="#664500" d="M6.333 8.972c.729 0 1.32-.827 1.32-1.847s-.591-1.847-1.32-1.847c-.729 0-1.32.827-1.32 1.847s.591 1.847 1.32 1.847zM12.667 8.972c.729 0 1.32-.827 1.32-1.847s-.591-1.847-1.32-1.847c-.729 0-1.32.827-1.32 1.847s.591 1.847 1.32 1.847z"></path>
-                 </svg>
+                // Filled/Active Icon
+                <svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" fill="none" viewBox="0 0 19 19">
+                  <path fill="#FFCC4D" d="M9.5 19a9.5 9.5 0 100-19 9.5 9.5 0 000 19z"></path>
+                  <path fill="#664500" d="M9.5 11.083c-1.912 0-3.181-.222-4.75-.527-.358-.07-1.056 0-1.056 1.055 0 2.111 2.425 4.75 5.806 4.75 3.38 0 5.805-2.639 5.805-4.75 0-1.055-.697-1.125-1.055-1.055-1.57.305-2.838.527-4.75.527z"></path>
+                  <path fill="#fff" d="M4.75 11.611s1.583.528 4.75.528 4.75-.528 4.75-.528-1.056 2.111-4.75 2.111-4.75-2.11-4.75-2.11z"></path>
+                  <path fill="#664500" d="M6.333 8.972c.729 0 1.32-.827 1.32-1.847s-.591-1.847-1.32-1.847c-.729 0-1.32.827-1.32 1.847s.591 1.847 1.32 1.847zM12.667 8.972c.729 0 1.32-.827 1.32-1.847s-.591-1.847-1.32-1.847c-.729 0-1.32.827-1.32 1.847s.591 1.847 1.32 1.847z"></path>
+                </svg>
               ) : (
-                 // Outline/Inactive Icon (Thumb)
-                 <svg className="_reaction_svg" xmlns="http://www.w3.org/2000/svg" width="19" height="19" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" />
-                 </svg>
+                // Outline/Inactive Icon (Thumb)
+                <svg className="_reaction_svg" xmlns="http://www.w3.org/2000/svg" width="19" height="19" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" />
+                </svg>
               )}
               <span className={isLiked ? "text-warning fw-bold" : ""}> {isLiked ? "Liked" : "Like"}</span>
             </span>
@@ -255,12 +255,10 @@ export const PostCard = ({ post }: PostCardProps) => {
       {/* --- COMMENTS SECTION --- */}
       {showComments && (
         <div className="_feed_inner_timeline_cooment_area">
-
-
           <CommentInput postId={post.id} onCommentAdded={fetchComments} />
 
-          <Comments comments={comments} />
-
+          {/* Pass the fetchComments function to Comments so nested replies can trigger it */}
+          <Comments comments={comments} onReply={fetchComments} />
         </div>
       )}
     </div>
