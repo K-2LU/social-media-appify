@@ -9,6 +9,7 @@ import commentRoutes from './routes/comments.js'
 import voteRoutes from './routes/votes.js'
 import authRoutes from './routes/auth.js'
 import commentVoteRoutes from "./routes/commentVotes.js";
+import followersRoutes from "./routes/followers.js"
 
 import cors from "cors"
 import cookieParser from "cookie-parser";
@@ -56,6 +57,7 @@ app.use("/api/post", postRoutes)
 app.use("/api/vote", voteRoutes)
 app.use("/api/comment", commentRoutes)
 app.use("/api/comment-vote", commentVoteRoutes);
+app.use("api/follow", followersRoutes)
 
 app.listen(8000, () => {
     console.log("app listening");
