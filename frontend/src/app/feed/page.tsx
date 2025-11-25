@@ -4,10 +4,8 @@ import Link from 'next/link';
 import axios from "axios";
 import { useState, useEffect } from 'react';
 
-import { EventData, Post } from '@/interfaces';
+import { Post } from '@/interfaces';
 import { Header } from '@/components/layout/Header';
-import { SidebarSection } from '@/components/layout/SidebarSection';
-import { UserListEntry } from '@/components/layout/UserListEntry';
 import { CreatePost } from '@/components/feed/CreatePost';
 import { PostCard } from '@/components/feed/PostCard';
 import { Suggestions } from '@/components/layout/Suggestions';
