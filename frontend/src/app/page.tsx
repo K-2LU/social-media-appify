@@ -9,7 +9,6 @@ export default function HomePage() {
   const router = useRouter();
 
   useEffect(() => {
-    // If user data exists in context (localStorage), send to feed
     if (currentUser) {
       router.push("/feed");
     } else {
@@ -18,6 +17,5 @@ export default function HomePage() {
     }
   }, [currentUser, router]);
 
-  // Render nothing (or a loading spinner) while redirecting
   return null; 
 }
