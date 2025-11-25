@@ -166,7 +166,7 @@ export const PostCard = ({ post }: PostCardProps) => {
         <h4 className="_feed_inner_timeline_post_title">{post.desc}</h4>
 
 
-        {post.img_link && post.img_link.length > 0 && (
+        {/* {post.img_link && post.img_link.length > 0 && (
           <div className="_feed_inner_timeline_image">
             <Image
               src={resolveImage(post.img_link[0])}
@@ -174,6 +174,16 @@ export const PostCard = ({ post }: PostCardProps) => {
               width={600}
               height={400}
               className="_time_img w-100 h-auto object-fit-cover"
+            />
+          </div>
+        )} */}
+                {post.img_link && post.img_link.length > 0 && (
+          <div className="_feed_inner_timeline_image">
+            <img
+              src={resolveImage(post.img_link[0])}
+              alt="Post Content"
+              className="_time_img w-100 h-auto object-fit-cover"
+              style={{ width: "100%", height: "auto", objectFit: "cover", borderRadius: "8px" }}
             />
           </div>
         )}
