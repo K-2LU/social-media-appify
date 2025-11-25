@@ -1,6 +1,7 @@
 "use client";
 
-import { CommentItem, CommentType } from "./CommentItem";
+import { CommentType } from "@/interfaces";
+import { CommentItem } from "./CommentItem";
 
 interface CommentsProps {
   comments: CommentType[];

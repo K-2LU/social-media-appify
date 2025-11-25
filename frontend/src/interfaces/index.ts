@@ -49,6 +49,17 @@ export interface Comment {
   post_id: string;
 }
 
+
+export interface CommentType {
+  id: string;
+  desc: string;
+  name: string;
+  userId: string;
+  profilePic: string | null;
+  createdAt?: string;
+}
+
+
 // 4. Followers Table
 export interface Follower {
   id: string;

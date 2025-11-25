@@ -3,15 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-
-export interface CommentType {
-  id: string;
-  desc: string;
-  name: string;
-  userId: string;
-  profilePic: string | null;
-  createdAt?: string;
-}
+import { CommentType } from "@/interfaces";
 
 interface CommentItemProps {
   comment: CommentType;
