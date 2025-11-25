@@ -30,7 +30,7 @@ export const getPosts = (req, res) => {
         FROM posts AS p
         JOIN users AS u ON (u.id = p.user_id)
         LEFT JOIN followers AS f ON (p.user_id = f.followed_user_id)
-        WHERE f.follower_user_id = $1 OR p.user_id = $1
+        WHERE f.follower_user_id = $1 OR p.user_id = $1 AND p.audience=1
         ORDER BY p."createdAt" DESC
       `;
 
@@ -69,7 +69,7 @@ export const addPost = (req, res) => {
         imgArray,
         userInfo.id,
         moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
-        req.body.audience || 1, // default to 1 : public
+        req.body.audience, // default to 1 : public
       ];
 
       try {
