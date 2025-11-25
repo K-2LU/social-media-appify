@@ -29,7 +29,7 @@ export const CreatePost = ({ onPostCreated }: CreatePostProps) => {
       );
       return res.data;
     } catch (err) {
-      console.log("Upload failed:", err);
+      console.error("Upload failed:", err);
       return null;
     }
   };

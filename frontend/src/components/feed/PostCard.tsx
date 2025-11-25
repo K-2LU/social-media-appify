@@ -6,7 +6,6 @@ import Link from "next/link";
 import moment from "moment";
 import { Post } from "@/interfaces";
 
-
 interface PostCardProps {
   post: Post;
 }
@@ -16,7 +15,7 @@ export const PostCard = ({ post }: PostCardProps) => {
   const [showComments, setShowComments] = useState(false);
 
   const resolveImage = (imgName: string) => `/upload/${imgName}`;
-  const profilePic = post.display_pic || "/assets/images/profile.png";
+  const profilePic = post.display_pic || "/assets/images/Avatar.png";
 
   return (
     <div className="_feed_inner_timeline_post_area _b_radious6 _padd_b24 _padd_t24 _mar_b16">
