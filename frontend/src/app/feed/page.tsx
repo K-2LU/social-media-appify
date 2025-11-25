@@ -1,13 +1,13 @@
 
 import Link from 'next/link';
 import { EventData } from '@/interfaces';
-import { Header } from '@/componenets/layout/Header';
-import { SidebarSection } from '@/componenets/layout/SidebarSection';
-import { UserListEntry } from '@/componenets/layout/UserListEntry';
-import { EventCard } from '@/componenets/layout/EventCard';
-import { StoryReel } from '@/componenets/feed/StoryReel';
-import { CreatePost } from '@/componenets/feed/CreatePost';
-import { PostCard } from '@/componenets/feed/PostCard';
+import { Header } from '@/components/layout/Header';
+import { SidebarSection } from '@/components/layout/SidebarSection';
+import { UserListEntry } from '@/components/layout/UserListEntry';
+import { EventCard } from '@/components/layout/EventCard';
+import { StoryReel } from '@/components/feed/StoryReel';
+import { CreatePost } from '@/components/feed/CreatePost';
+import { PostCard } from '@/components/feed/PostCard';
 
 const events: EventData[] = [
     {

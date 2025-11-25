@@ -3,9 +3,9 @@ import Link from 'next/link';
 
 import '@/styles/main.css'; 
 import '@/styles/responsive.css';
-import { BgShapes } from '@/componenets/login/BgShapes';
-import { Button } from '@/componenets/ui/Button';
-import { LoginForm } from '@/componenets/login/LoginForm';
+import { BgShapes } from '@/components/login/BgShapes';
+import { Button } from '@/components/ui/Button';
+import { LoginForm } from '@/components/login/LoginForm';
 
 export default function LoginPage() {
   return (
