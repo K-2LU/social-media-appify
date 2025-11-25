@@ -14,18 +14,6 @@ export interface User {
   last_name: string | null;
 }
 
-// 2. Posts Table
-// export interface Post {
-//   id: string;
-//   desc: string;
-//   img_link: string[] | null; // Postgres array
-//   createdAt: string;
-//   userId: string;
-//   name: string;       // From JOIN users
-//   display_pic: string | null; // From JOIN users
-//   audience?: number;  // 1 = Public, etc.
-// }
-
 export interface Post {
   id: string;
   desc: string;
@@ -35,9 +23,7 @@ export interface Post {
   last_name: string;
   display_pic: string | null;
   createdAt: string;
-  upvote: number | null;
-  downvote: number | null;
-  audience: number | null;
+  audience: number;
 }
 
 // 3. Comments Table
@@ -48,6 +34,20 @@ export interface Comment {
   user_id: string;
   post_id: string;
 }
+
+
+export interface CommentType {
+  id: string;
+  desc: string;
+  first_name: string;
+  last_name: string;
+  userId: string;
+  profilePic: string | null;
+  created_at?: string;
+  post_id: string; 
+  parent_comment_id: string | null; // Needed to identify nesting
+}
+
 
 // 4. Followers Table
 export interface Follower {

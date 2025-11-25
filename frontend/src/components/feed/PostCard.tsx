@@ -1,59 +1,124 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import moment from "moment";
-import { Post } from "@/interfaces";
+import { CommentType, Post } from "@/interfaces";
+import { Comments } from "./Comments";
+import { CommentInput } from "./CommentInput";
+import axios from "axios";
+import { AuthContext } from "@/context/authContext";
 
 interface PostCardProps {
   post: Post;
 }
 
 export const PostCard = ({ post }: PostCardProps) => {
+  const { currentUser } = useContext(AuthContext)!;
   const [showMenu, setShowMenu] = useState(false);
   const [showComments, setShowComments] = useState(false);
+  const [comments, setComments] = useState<CommentType[]>([]);
+  const [likes, setLikes] = useState<string[]>([]); // Array of userIds who liked the post
 
-  const resolveImage = (imgName: string) => `/upload/${imgName}`;
+  const resolveImage = (imgName: string) => {
+    if (imgName.startsWith("http")) return imgName;
+    return `/upload/${imgName}`;
+  };
+
   const profilePic = post.display_pic || "/assets/images/Avatar.png";
+
+  // 1. Fetch Likes
+  useEffect(() => {
+    const fetchLikes = async () => {
+      try {
+        const res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/api/vote?postId=${post.id}`);
+        setLikes(res.data);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchLikes();
+  }, [post.id]);
+
+  // 2. Check if current user liked
+  const isLiked = likes.includes(currentUser?.id || "");
+
+  // 3. Handle Like Toggle
+  const handleLike = async () => {
+    if (isLiked) {
+      setLikes(prev => prev.filter(id => id !== currentUser?.id));
+      try {
+        await axios.delete(`${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/api/vote?postId=${post.id}`, { withCredentials: true });
+      } catch (err) {
+        if (currentUser?.id) setLikes(prev => [...prev, currentUser.id]);
+      }
+    } else {
+      if (currentUser?.id) setLikes(prev => [...prev, currentUser.id]);
+      try {
+        await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/api/vote`, { postId: post.id }, { withCredentials: true });
+      } catch (err) {
+        setLikes(prev => prev.filter(id => id !== currentUser?.id));
+      }
+    }
+  };
+
+  const fetchComments = async () => {
+    try {
+      const res = await axios.get(
+        `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/api/comment?postId=${post.id}`,
+        { withCredentials: true }
+      );
+      setComments(res.data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  useEffect(() => {
+    if (showComments) {
+      fetchComments();
+    }
+  }, [showComments, post.id]);
+
 
   return (
     <div className="_feed_inner_timeline_post_area _b_radious6 _padd_b24 _padd_t24 _mar_b16">
       <div className="_feed_inner_timeline_content _padd_r24 _padd_l24">
-        
+
         {/* --- TOP SECTION (Author info & Menu) --- */}
         <div className="_feed_inner_timeline_post_top">
           <div className="_feed_inner_timeline_post_box">
             {/* Author Avatar */}
             <div className="_feed_inner_timeline_post_box_image">
               <Link href={`/profile/${post.userId}`}>
-                <Image 
-                  src={profilePic} 
-                  alt={post.first_name + ' ' + post.last_name} 
-                  width={44} 
-                  height={44} 
-                  className="_post_img rounded-circle object-fit-cover" 
+                <Image
+                  src={profilePic}
+                  alt={post.first_name + ' ' + post.last_name}
+                  width={44}
+                  height={44}
+                  className="_post_img rounded-circle object-fit-cover"
                 />
               </Link>
             </div>
-            
+
             {/* Author Name & Time */}
             <div className="_feed_inner_timeline_post_box_txt">
               <Link href={`/profile/${post.userId}`}>
                 <h4 className="_feed_inner_timeline_post_box_title">{post.first_name + ' ' + post.last_name}</h4>
               </Link>
               <p className="_feed_inner_timeline_post_box_para">
-                {moment(post.createdAt).fromNow()} . 
-                <a href="#0"> {post.audience === 1 ? "Public" : "Friends"}</a>
+                {moment(post.createdAt).fromNow()} .
+                <a href="#0"> {post.audience === 1 ? "Public" : "Private"}</a>
               </p>
             </div>
           </div>
 
-          {/* Dropdown Menu (Three Dots) */}
+
           <div className="_feed_inner_timeline_post_box_dropdown" style={{ position: 'relative' }}>
             <div className="_feed_timeline_post_dropdown">
-              <button 
-                type="button" 
+              <button
+                type="button"
                 className="_feed_timeline_post_dropdown_link"
                 onClick={() => setShowMenu(!showMenu)}
               >
@@ -65,7 +130,7 @@ export const PostCard = ({ post }: PostCardProps) => {
               </button>
             </div>
 
-            {/* Dropdown Content */}
+
             {showMenu && (
               <div className="_feed_timeline_dropdown show" style={{ display: 'block', right: 0, top: '30px' }}>
                 <ul className="_feed_timeline_dropdown_list">
@@ -74,7 +139,7 @@ export const PostCard = ({ post }: PostCardProps) => {
                       <span>
                         {/* Save Icon SVG */}
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 18 18">
-                           <path stroke="#1890FF" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.2" d="M14.25 15.75L9 12l-5.25 3.75v-12a1.5 1.5 0 011.5-1.5h7.5a1.5 1.5 0 011.5 1.5v12z"/>
+                          <path stroke="#1890FF" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.2" d="M14.25 15.75L9 12l-5.25 3.75v-12a1.5 1.5 0 011.5-1.5h7.5a1.5 1.5 0 011.5 1.5v12z" />
                         </svg>
                       </span>
                       Save Post
@@ -85,7 +150,7 @@ export const PostCard = ({ post }: PostCardProps) => {
                       <span>
                         {/* Delete Icon SVG */}
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 18 18">
-                           <path stroke="#1890FF" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.2" d="M2.25 4.5h13.5M6 4.5V3a1.5 1.5 0 011.5-1.5h3A1.5 1.5 0 0112 3v1.5m2.25 0V15a1.5 1.5 0 01-1.5 1.5h-7.5a1.5 1.5 0 01-1.5-1.5V4.5h10.5zM7.5 8.25v4.5M10.5 8.25v4.5"/>
+                          <path stroke="#1890FF" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.2" d="M2.25 4.5h13.5M6 4.5V3a1.5 1.5 0 011.5-1.5h3A1.5 1.5 0 0112 3v1.5m2.25 0V15a1.5 1.5 0 01-1.5 1.5h-7.5a1.5 1.5 0 01-1.5-1.5V4.5h10.5zM7.5 8.25v4.5M10.5 8.25v4.5" />
                         </svg>
                       </span>
                       Delete Post
@@ -97,58 +162,87 @@ export const PostCard = ({ post }: PostCardProps) => {
           </div>
         </div>
 
-        {/* --- CONTENT SECTION --- */}
+
         <h4 className="_feed_inner_timeline_post_title">{post.desc}</h4>
-        
-        {/* Image Rendering Logic */}
+
+
         {post.img_link && post.img_link.length > 0 && (
           <div className="_feed_inner_timeline_image">
-            {/* Currently displaying only the first image. You can map this if you have a grid layout */}
-            <Image 
-              src={resolveImage(post.img_link[0])} 
-              alt="Post Content" 
-              width={600} 
-              height={400} 
+            <Image
+              src={resolveImage(post.img_link[0])}
+              alt="Post Content"
+              width={600}
+              height={400}
               className="_time_img w-100 h-auto object-fit-cover"
             />
           </div>
         )}
       </div>
 
-      {/* --- STATS SECTION --- */}
+
       <div className="_feed_inner_timeline_total_reacts _padd_r24 _padd_l24 _mar_b26">
         <div className="_feed_inner_timeline_total_reacts_image">
-           {/* Static react images for now - integrate real likes later */}
-           <Image src="/assets/images/react_img1.png" alt="" width={20} height={20} className="_react_img1"/>
-           <p className="_feed_inner_timeline_total_reacts_para">{post.upvote || 0}</p>
+          <Image src="/assets/images/react_img1.png" alt="" width={20} height={20} className="_react_img1" />
+          <p className="_feed_inner_timeline_total_reacts_para">{likes.length}</p>
         </div>
         <div className="_feed_inner_timeline_total_reacts_txt">
           <p className="_feed_inner_timeline_total_reacts_para1">
-             <span>0</span> Comments
+            <span>{comments.length}</span> Comments
           </p>
         </div>
       </div>
 
       {/* --- ACTION BUTTONS --- */}
       <div className="_feed_inner_timeline_reaction">
-        <button className="_feed_inner_timeline_reaction_emoji _feed_reaction">
+        <button
+          // Add active class if liked
+          className={`_feed_inner_timeline_reaction_emoji _feed_reaction ${isLiked ? '_feed_reaction_active' : ''}`}
+          onClick={handleLike}
+        >
           <span className="_feed_inner_timeline_reaction_link">
-             <span className="me-2">👍</span> Like
+            <span>
+              {/* Using standard thumbs up SVG for generic 'Like' or keeping your existing icon */}
+              {isLiked ? (
+                // Filled/Active Icon
+                <svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" fill="none" viewBox="0 0 19 19">
+                  <path fill="#FFCC4D" d="M9.5 19a9.5 9.5 0 100-19 9.5 9.5 0 000 19z"></path>
+                  <path fill="#664500" d="M9.5 11.083c-1.912 0-3.181-.222-4.75-.527-.358-.07-1.056 0-1.056 1.055 0 2.111 2.425 4.75 5.806 4.75 3.38 0 5.805-2.639 5.805-4.75 0-1.055-.697-1.125-1.055-1.055-1.57.305-2.838.527-4.75.527z"></path>
+                  <path fill="#fff" d="M4.75 11.611s1.583.528 4.75.528 4.75-.528 4.75-.528-1.056 2.111-4.75 2.111-4.75-2.11-4.75-2.11z"></path>
+                  <path fill="#664500" d="M6.333 8.972c.729 0 1.32-.827 1.32-1.847s-.591-1.847-1.32-1.847c-.729 0-1.32.827-1.32 1.847s.591 1.847 1.32 1.847zM12.667 8.972c.729 0 1.32-.827 1.32-1.847s-.591-1.847-1.32-1.847c-.729 0-1.32.827-1.32 1.847s.591 1.847 1.32 1.847z"></path>
+                </svg>
+              ) : (
+                // Outline/Inactive Icon (Thumb)
+                <svg className="_reaction_svg" xmlns="http://www.w3.org/2000/svg" width="19" height="19" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" />
+                </svg>
+              )}
+              <span className={isLiked ? "text-warning fw-bold" : ""}> {isLiked ? "Liked" : "Like"}</span>
+            </span>
           </span>
         </button>
-        
-        <button 
+
+        <button
           className="_feed_inner_timeline_reaction_comment _feed_reaction"
           onClick={() => setShowComments(!showComments)}
         >
-          <span className="_feed_inner_timeline_reaction_link">
-             <span className="me-2">💬</span> Comment
+          <span className="_feed_inner_timeline_reaction_link"> <span>
+            <svg className="_reaction_svg" xmlns="http://www.w3.org/2000/svg" width="21" height="21" fill="none" viewBox="0 0 21 21">
+              <path stroke="#000" d="M1 10.5c0-.464 0-.696.009-.893A9 9 0 019.607 1.01C9.804 1 10.036 1 10.5 1v0c.464 0 .696 0 .893.009a9 9 0 018.598 8.598c.009.197.009.429.009.893v6.046c0 1.36 0 2.041-.317 2.535a2 2 0 01-.602.602c-.494.317-1.174.317-2.535.317H10.5c-.464 0-.696 0-.893-.009a9 9 0 01-8.598-8.598C1 11.196 1 10.964 1 10.5v0z"></path>
+              <path stroke="#000" strokeLinecap="round" strokeLinejoin="round" d="M6.938 9.313h7.125M10.5 14.063h3.563"></path>
+            </svg>
+            Comment
+          </span>
           </span>
         </button>
-        
+
         <button className="_feed_inner_timeline_reaction_share _feed_reaction">
-          <span className="_feed_inner_timeline_reaction_link">
-             <span className="me-2">↗️</span> Share
+          <span className="_feed_inner_timeline_reaction_link"> <span>
+            <svg className="_reaction_svg" xmlns="http://www.w3.org/2000/svg" width="24" height="21" fill="none" viewBox="0 0 24 21">
+              <path stroke="#000" strokeLinejoin="round" d="M23 10.5L12.917 1v5.429C3.267 6.429 1 13.258 1 20c2.785-3.52 5.248-5.429 11.917-5.429V20L23 10.5z"></path>
+            </svg>
+
+            Share
+          </span>
           </span>
         </button>
       </div>
@@ -156,21 +250,10 @@ export const PostCard = ({ post }: PostCardProps) => {
       {/* --- COMMENTS SECTION --- */}
       {showComments && (
         <div className="_feed_inner_timeline_cooment_area">
-          <div className="_feed_inner_comment_box">
-            <form className="_feed_inner_comment_box_form" onSubmit={(e) => e.preventDefault()}>
-              <div className="_feed_inner_comment_box_content">
-                <div className="_feed_inner_comment_box_content_image">
-                  <Image src={profilePic} width={40} height={40} alt="" className="_comment_img rounded-circle" />
-                </div>
-                <div className="_feed_inner_comment_box_content_txt">
-                  <textarea className="form-control _comment_textarea" placeholder="Write a comment"></textarea>
-                </div>
-              </div>
-              <div className="_feed_inner_comment_box_icon">
-                 <button className="_feed_inner_comment_box_icon_btn">Post</button>
-              </div>
-            </form>
-          </div>
+          <CommentInput postId={post.id} onCommentAdded={fetchComments} />
+
+          {/* Pass the fetchComments function to Comments so nested replies can trigger it */}
+          <Comments comments={comments} onReply={fetchComments} />
         </div>
       )}
     </div>

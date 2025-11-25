@@ -81,7 +81,6 @@ export const Header = () => {
               <>
                 <div className="_header_nav_profile_image">
                   <Image 
-                    // Fallback to default image if user has no pic
                     src={currentUser.display_pic || "/assets/images/profile.png"} 
                     alt="Profile" 
                     width={40} 
