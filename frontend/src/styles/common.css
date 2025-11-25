@@ -1,6 +1,7 @@
 ::-webkit-scrollbar {
     display: none;
 }
+
 * {
     margin: 0px;
     padding: 0px;
@@ -2144,3 +2145,4 @@ ul {
 /*::-webkit-scrollbar-thumb:hover {
   background: #555;
 }
+  */
