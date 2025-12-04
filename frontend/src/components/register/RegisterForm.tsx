@@ -75,13 +75,16 @@ export const RegisterForm = () => {
 
     if (validateForm()) {
       try {
-        await axios.post("http://localhost:8000/api/auth/register", {
-          username: formData.username,
-          email: formData.email,
-          password: formData.password,
-          first_name: formData.first_name,
-          last_name: formData.last_name,
-        });
+        await axios.post(
+          `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/api/auth/register`,
+          {
+            username: formData.username,
+            email: formData.email,
+            password: formData.password,
+            first_name: formData.first_name,
+            last_name: formData.last_name,
+          }
+        );
 
         // Redirect to login on success
         router.push("/auth/login");
