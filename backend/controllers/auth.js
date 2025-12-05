@@ -41,35 +41,49 @@ export const register = async(req, res) => {
 }
 
 
-export const login = (req, res) => {
-  const q = "SELECT * FROM users WHERE email = $1";
+export const login = async(req, res) => {
+    try {
+        const query = "SELECT * FROM users WHERE email = $1";
+        const dbReq = await pool.query(query, [req.body.email]);
+        
+        const invalidCredMsg = "Invalid Email or Password";
 
-  pool.query(q, [req.body.email], (err, data) => {
-    if (err) return res.status(500).json(err);
-    if (data.rows.length === 0) return res.status(404).json("User not found!");
+        if (!dbReq.rows.length)   {
+            // 404: not found error
+            return res.status(401).json(invalidCredMsg);
+        }
 
-    const checkPassword = bcrypt.compareSync(
-      req.body.password,
-      data.rows[0].password
-    );
+        const userInfo = dbReq.rows[0];
 
-    if (!checkPassword)
-      return res.status(400).json("Wrong password or username!");
+        const checkPassword = await bcrypt.compare(
+            req.body.password,
+            userInfo.password
+        )
+        if (!checkPassword) {
+            return res.status(401).json(invalidCredMsg);
+        }
 
-    const token = jwt.sign({ id: data.rows[0].id }, process.env.JWT_SECRET);
+        const token = jwt.sign(
+            {id: userInfo.id},
+            process.env.JWT_SECRET,
+            {expiresIn: "7d"},
+        )
 
-    const { password, ...others } = data.rows[0];
+        const {password, ...others} = userInfo;
 
-    res
-      .cookie("accessToken", token, {
-        httpOnly: true,
-        secure: false,    // MUST be false for localhost (http)
-        sameSite: "lax",  // MUST be 'lax' so the browser sends it to port 8000
-      })
-      .status(200)
-      .json(others);
-  });
-};
+        res.cookie("accessToken", token, {
+            httpOnly: true,
+            secure: false,
+            sameSite: "lax"
+        })
+        .status(200)
+        .json(others);
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json("Internal Server Error");
+    }
+}
 
 
 export const logout = (req, res) => {
