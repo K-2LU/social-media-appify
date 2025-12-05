@@ -1,40 +1,45 @@
+import 'dotenv/config'
+
 import pool from "../connect.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import dotenv from "dotenv";
 
-dotenv.config()
+export const register = async(req, res) => {
+    if (!req.body.username || !req.body.email || !req.body.password) {
+        return res.status(400).json("required field missing")
+    }
 
-export const register = (req, res) => {
-  // CHECK USER IF EXISTS
-  const q = "SELECT * FROM users WHERE username = $1";
+    try {
+        const query = "SELECT * FROM users where username = $1";
+        const existingUser = await pool.query(query, [req.body.username]);
 
-  pool.query(q, [req.body.username], (err, data) => {
-    if (err) return res.status(500).json(err);
-    if (data.rows.length) return res.status(409).json("User already exists!");
+        if (existingUser.rows.length) {
+            // 409 forbidden error
+            return res.status(409).json("user exists");
+        }
 
-    // CREATE A NEW USER
-    // Hash the password
-    const salt = bcrypt.genSaltSync(10);
-    const hashedPassword = bcrypt.hashSync(req.body.password, salt);
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(req.body.password, salt);
 
-    const insertQuery =
-      "INSERT INTO users (username, email, password, first_name, last_name) VALUES ($1, $2, $3, $4, $5)";
-    
-    const values = [
-      req.body.username,
-      req.body.email,
-      hashedPassword,
-      req.body.first_name,
-      req.body.last_name,
-    ];
+        const insertQuery = "INSERT INTO users (username, email, password, first_name, last_name) VALUES ($1, $2, $3, $4, $5)";
 
-    pool.query(insertQuery, values, (err, data) => {
-      if (err) return res.status(500).json(err);
-      return res.status(200).json("User has been created.");
-    });
-  });
-};
+        const values = [
+            req.body.username,
+            req.body.email,
+            hashedPassword,
+            req.body.first_name,
+            req.body.last_name,
+        ];
+
+        await pool.query(insertQuery, values);
+        // 201: created
+        return res.status(200).json("user created");
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json("Internal Server Error")
+    }
+}
+
 
 export const login = (req, res) => {
   const q = "SELECT * FROM users WHERE email = $1";
